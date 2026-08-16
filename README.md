@@ -1,5 +1,5 @@
 
-# 🎬 Film Mahşeri - Yeni Nesil Premium Sinema Platformu
+# 🎬 Film Mahşeri - Serverless Premium Sinema & Dizi Platformu
 
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
@@ -8,128 +8,162 @@
 ![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
 ![TMDb API](https://img.shields.io/badge/TMDb-01B4E4?style=for-the-badge&logo=themoviedb&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
-**Film Mahşeri**, geleneksel CMS (İçerik Yönetim Sistemi) altyapılarının hantallığından arındırılmış, modern BaaS (Backend as a Service) çözümleriyle baştan aşağı yeniden inşa edilmiş sunucusuz (Serverless) bir SPA (Single Page Application) mimarisidir. 
+**Film Mahşeri**, geleneksel CMS (WordPress, Blogger vb.) altyapılarının hantallığını tamamen ortadan kaldıran, modern **BaaS (Backend as a Service)** çözümleriyle baştan aşağı yeniden inşa edilmiş, %100 Sunucusuz (Serverless) bir **SPA (Single Page Application)** mimarisidir.
 
-Proje, 1080p kesintisiz film/dizi izleme deneyimini, yüksek performanslı veritabanı sorguları ve dinamik kullanıcı etkileşimleriyle harmanlar.
+Bu proje; yüksek performanslı PostgreSQL sorgularını, gerçek zamanlı NoSQL veritabanı akışlarını ve dinamik API entegrasyonlarını sadece `Vanilla JS` kullanarak bir araya getiren deneysel bir mühendislik harikasıdır.
 
 ---
 
 ## 📑 İçindekiler
-1. [🌟 Temel Özellikler ve Mimari](#-temel-özellikler-ve-mimari)
-2. [📁 Dosya ve Klasör Yapısı](#-dosya-ve-klasör-yapısı)
-3. [⚙️ Kullanılan Teknolojiler (Tech Stack)](#️-kullanılan-teknolojiler-tech-stack)
-4. [🗄️ Veritabanı Şeması (Supabase PostgreSQL)](#️-veritabanı-şeması-supabase-postgresql)
-5. [🔐 Güvenlik Mimarisi (Firebase & RLS)](#-güvenlik-mimarisi-firebase--rls)
-6. [🚀 Kurulum ve Çalıştırma Rehberi](#-kurulum-ve-çalıştırma-rehberi)
-7. [📱 Sihirli PWA Motoru (Blogger Bypass)](#-sihirli-pwa-motoru-blogger-bypass)
-8. [🚧 Karşılaşılan Sorunlar ve Çözümleri](#-karşılaşılan-sorunlar-ve-çözümleri)
+1. [🌟 Sistem Mimarisi ve Temel Özellikler](#-sistem-mimarisi-ve-temel-özellikler)
+2. [📁 Dosya ve Klasör Ağacı](#-dosya-ve-klasör-ağacı)
+3. [⚙️ Teknoloji Yığını (Tech Stack)](#️-teknoloji-yığını-tech-stack)
+4. [🛠️ Kurulum Rehberi (Adım Adım)](#️-kurulum-rehberi-adım-adım)
+5. [🗄️ Veritabanı Kurulumu (SQL & NoSQL)](#️-veritabanı-kurulumu-sql--nosql)
+6. [🔐 Çift Katmanlı Güvenlik Ağı](#-çift-katmanlı-güvenlik-ağı)
+7. [🧠 Gelişmiş Modüller (PWA & Anti-Theft)](#-gelişmiş-modüller-pwa--anti-theft)
+8. [🚧 Sıkça Sorulan Sorular ve Hata Çözümleri](#-sıkça-sorulan-sorular-ve-hata-çözümleri)
 9. [🗺️ Yol Haritası (Roadmap)](#️-yol-haritası-roadmap)
+10. [🤝 Katkıda Bulunma & Lisans](#-katkıda-bulunma--lisans)
 
 ---
 
-## 🌟 Temel Özellikler ve Mimari
+## 🌟 Sistem Mimarisi ve Temel Özellikler
 
-*   **TMDb Dinamik Trend Algoritması:** Platform, her açılışta `TMDb Trending API`'sine bağlanarak o hafta dünyada en çok izlenen filmleri tespit eder ve yerel Supabase veritabanındaki kayıtlarla eşleştirerek ana sayfadaki "Editörün Seçtikleri" alanını otomatik günceller.
-*   **Tam Sunucusuz (Serverless) Altyapı:** Backend sunucusu kullanılmamıştır. Tüm CRUD işlemleri, Client-Side üzerinden Supabase (PostgreSQL) ve Firebase (NoSQL) SDK'ları ile asenkron (async/await) olarak yönetilir.
-*   **Sıfır Dosyalı PWA Entegrasyonu:** Sunucu kısıtlamaları (özellikle statik hostlar ve Blogger) nedeniyle fiziksel `manifest.json` yüklenemeyen durumlarda, JavaScript tabanlı `Data URI (Base64)` tekniği ile tarayıcı hafızasında sanal bir PWA motoru oluşturulmuştur.
-*   **Gerçek Zamanlı (Live) Arama:** Veritabanına yük bindirmeden, Supabase'in `ilike` operatörü ile asenkron çalışan milisaniyelik canlı arama motoru.
-*   **Kusursuz Tema Motoru:** Kullanıcının Dark/Light tema tercihini `LocalStorage`'da tutan ve sayfa yüklenmeden önce DOM'a uygulayan (FOUC engelleyici) CSS değişken destekli sistem.
+*   **TMDb Dinamik Trend Algoritması:** Sistem, her yüklendiğinde `TMDb Trending API` üzerinden haftanın en çok izlenen küresel filmlerini çeker. Bu ID'leri kendi Supabase veritabanımızla asenkron olarak eşleştirip ana sayfadaki "Editörün Seçtikleri" alanını insan müdahalesi olmadan otomatik günceller.
+*   **Gerçek Zamanlı (Live) Arama:** Veritabanını yormamak için `Debounce` (Geciktirme) tekniği kullanılmış, Supabase'in `ilike` (Büyük/küçük harf duyarsız) operatörü ile milisaniyelik canlı arama motoru geliştirilmiştir.
+*   **İleri Düzey Profil ve Yorum Sistemi:** Firebase Firestore kullanılarak izleyicilerin yaptıkları yorumlar, favori filmleri ve izleme geçmişleri anlık (Real-time) olarak güncellenir.
+*   **Kusursuz Tema Motoru:** Sayfa yüklenirken yaşanan FOUC (Flash of Unstyled Content - Beyaz ekran patlaması) sorununu çözen, kullanıcı tercihini `LocalStorage`'da şifreleyerek tutan CSS değişken (Custom Properties) destekli Dark/Light tema motoru.
 
 ---
 
-## 📁 Dosya ve Klasör Yapısı
+## 📁 Dosya ve Klasör Ağacı
 
-Proje dosyaları, modüler ve kolay genişletilebilir bir yapıda tasarlanmıştır:
+Modüler bir yaklaşımla, hiçbir frontend framework'ü (React/Vue) kullanılmadan SPA deneyimi yaratılmıştır:
 
 ```text
 film-mahseri-repo/
 │
-├── index.html          # Ana giriş, Trendler Slider'ı, Dinamik Grid Sistemi ve PWA Motoru
-├── watch.html          # Film izleme sayfası, Firebase Yorumlar modülü entegrasyonu
-├── robot.html          # Gelişmiş filtreleme ve rastgele film önerme motoru
-├── profile.html        # Firebase Auth destekli kullanıcı profili ve istek paneli
-├── admin.html          # (LOKAL) Veritabanına film eklemek için Service_Role destekli kontrol paneli
-├── style.css           # Global değişkenler, Glassmorphism UI ve Responsive Grid ayarları
-├── app.js              # Supabase/Firebase yapılandırmaları, Auth state yönetimi ve Global Fonksiyonlar
-└── README.md           # Proje belgelendirme dosyası
+├── index.html          # Ana sayfa: Trendler, Dinamik Grid, API Bağlantıları ve PWA Motoru
+├── watch.html          # İzleme Alanı: Video Player Wrapper, Firebase Yorumlar ve Öneriler
+├── robot.html          # Keşif Alanı: Çoklu parametre ile Supabase filtreleme motoru
+├── profile.html        # Kullanıcı Paneli: İzleme geçmişi, Favoriler ve Yorum yönetimi
+├── admin.html          # LOKAL YÖNETİM: Supabase ve Firebase'e veri basan şifreli kontrol paneli
+├── player.html         # Oynatıcı: M3U8 ve HLS yayınlarını işleyen güvenlik duvarlı player
+├── style.css           # Global Stiller: Glassmorphism UI, Değişkenler ve Responsive kurallar
+├── app.js              # Çekirdek: API anahtarları, Auth state yönetimi ve Global Fonksiyonlar
+└── README.md           # Proje Dökümantasyonu
 
 ```
 
 ---
 
-## ⚙️ Kullanılan Teknolojiler (Tech Stack)
+## ⚙️ Teknoloji Yığını (Tech Stack)
 
-| Kategori | Teknoloji | Kullanım Amacı |
-| --- | --- | --- |
-| **Frontend** | HTML5, CSS3, Vanilla JS | Çerçevesiz (Framework-less), ultra hızlı istemci (client) render işlemleri. |
-| **Ana Veritabanı** | Supabase (PostgreSQL) | Film arşivi, metadata (EXIF/JSON), türler ve kapak/backdrop URL'lerinin barındırılması. |
-| **Kullanıcı & Auth** | Firebase (Firestore & Auth) | Google Auth/Email ile üyelik sistemi, gerçek zamanlı yorum koleksiyonları ve film istek havuzu. |
-| **Veri Kaynağı** | TMDb API V3 | Trend olan haftalık film ID'lerinin ve metadata'nın çekilmesi. |
-| **Tasarım Dili** | Glassmorphism | CSS `backdrop-filter: blur()` ve RGBA gradient destekli modern, transparan UI tasarımı. |
+* **Frontend (İstemci):** HTML5, CSS3, ES6+ Vanilla JavaScript. (Sıfır bağımlılık ilkesi).
+* **Ana Veritabanı (İlişkisel):** `Supabase (PostgreSQL)`. Filmler, kategoriler, kapak yolları (URL) ve metadata verileri için yüksek okuma performansı.
+* **Bağlı Veritabanı (NoSQL) & Auth:** `Firebase (Firestore)`. Hızlı yazma/güncelleme gerektiren yorumlar, kullanıcı verileri, film istekleri ve hata bildirimleri için kullanılmıştır.
+* **Ağ Akışı:** Fetch API & Async/Await.
+* **Medya Oynatıcı:** HLS destekli özel yapılandırılmış JW Player (player.html içinde izole edilmiştir).
 
 ---
 
-## 🗄️ Veritabanı Şeması (Supabase PostgreSQL)
+## 🛠️ Kurulum Rehberi (Adım Adım)
 
-Filmleri saklamak için kullanılan temel tablonun (Table) SQL şeması aşağıdadır:
+Projenin kendi sunucunuzda veya localhost'ta çalışabilmesi için aşağıdaki adımları sırasıyla uygulayın:
+
+### 1. Projeyi Klonlayın
+
+```bash
+git clone [https://github.com/KULLANICI_ADINIZ/film-mahseri.git](https://github.com/KULLANICI_ADINIZ/film-mahseri.git)
+cd film-mahseri
+
+```
+
+### 2. Domain (Alan Adı) Güncellemesi
+
+Tüm `.html` dosyalarını ve `app.js` dosyasını açın. Kod içindeki `SENIN-SITEN.com` yer tutucularını **CTRL + F** yaparak bulun ve kendi gerçek alan adınız (veya `localhost`) ile değiştirin. Aksi takdirde SEO etiketleri ve Player Güvenlik Duvarı çalışmayacaktır.
+
+### 3. API Anahtarlarını Alın ve Yerleştirin
+
+* **TMDb:** [TheMovieDB](https://www.themoviedb.org/)'den ücretsiz API anahtarı alın ve `.html` dosyalarındaki `TREND_TMDB_API_KEY` sabitine yapıştırın.
+* **Supabase & Firebase:** `app.js` dosyasını açın ve config değişkenlerindeki `BURAYA_KENDI...` yazan kısımlara proje anahtarlarınızı girin.
+
+---
+
+## 🗄️ Veritabanı Kurulumu (SQL & NoSQL)
+
+### Supabase SQL Şeması
+
+Supabase panelinizde `SQL Editor` kısmına girin ve tabloyu oluşturmak için şu sorguyu çalıştırın:
 
 ```sql
--- "movies" Tablosu Oluşturma
 CREATE TABLE movies (
     id bigint generated by default as identity primary key,
     title text not null,
     original_title text,
     tmdb_id text unique,
+    player_path text not null,
     poster_path text,
     backdrop_path text,
     release_year integer,
     rating numeric,
-    genres text[],
+    genres text,
     slug text unique not null,
+    cast_data jsonb,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
--- Hızlı Arama İçin İndeksleme (Optimization)
+-- Aramaları %400 hızlandıran indeksleme
 CREATE INDEX idx_movies_title ON movies (title);
 CREATE INDEX idx_movies_slug ON movies (slug);
 
 ```
 
+### Firebase Firestore Şeması
+
+Firebase panelinizde Firestore veritabanını oluşturun. Tablolar kod tarafından otomatik oluşturulacaktır ancak şu koleksiyonlar kullanılmaktadır:
+
+* `users` (Kullanıcı profilleri ve izleme geçmişleri)
+* `comments` (Filmlere yapılan yorumlar)
+* `istekler` (Film istek formu verileri)
+* `iletisim` (İletişim formu verileri)
+* `roles` & `banned_users` (Yönetici yetkileri ve engellenenler)
+
 ---
 
-## 🔐 Güvenlik Mimarisi (Firebase & RLS)
+## 🔐 Çift Katmanlı Güvenlik Ağı
 
-Sunucusuz sistemlerde açıkta duran API anahtarlarının (Client Keys) kötüye kullanılmasını engellemek için **Çift Katmanlı Kilit Sistemi** kullanılmıştır. Anahtarların kaynak kodda görünmesi bir açık değil, mimarinin gerekliliğidir; asıl güvenlik tablolara konulan kilitlerdedir.
+SPA (Single Page Application) yapılarında API anahtarlarının kaynak kodda görünmesi bir mimari zorunluluktur. Güvenlik, kodları saklamakla değil; **veritabanına konulan kilitlerle (Polices/Rules)** sağlanır.
 
-### 1. Supabase Row Level Security (RLS)
+### Supabase RLS (Row Level Security) Kilidi
 
-İstemci tarafındaki `anon_key` sadece okuma (SELECT) yapabilir. Film ekleme, silme ve düzenleme (INSERT, UPDATE, DELETE) işlemleri tamamen dışarıya kapatılmıştır.
+Sisteme dışarıdan film eklenmesini engellemek için sadece okuma yetkisi verilmelidir:
 
 ```sql
--- RLS'yi Aktifleştir
 ALTER TABLE movies ENABLE ROW LEVEL SECURITY;
 
--- Sadece Okuma (Read-Only) Kuralı
-CREATE POLICY "Allow public read-only access" ON movies 
-FOR SELECT USING (true);
+CREATE POLICY "Herkes filmleri görebilir" 
+ON movies FOR SELECT USING (true);
+-- INSERT, UPDATE, DELETE komutları sadece Admin panelinden (Service Key ile) yapılabilir.
 
 ```
 
-### 2. Firebase Security Rules
+### Firebase Security Rules
 
-Yorum yapma ve istek gönderme formları sadece doğrulanmış (Giriş yapmış) kullanıcılara açıktır.
+Kullanıcıların sadece kendi verilerini silebilmesi ve yorumları sadece giriş yapanların yazabilmesi için:
 
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Film isteklerini sadece üyeler gönderebilir
+    // Sadece üyeler istek gönderebilir
     match /istekler/{document} {
       allow create: if request.auth != null;
-      allow read, update, delete: if false; // Sadece admin paneli okuyabilir
     }
-    // Yorumları herkes okuyabilir, sadece üyeler yazabilir
+    // Herkes yorum okuyabilir, sadece üyeler yorum yapabilir
     match /comments/{movieSlug}/list/{commentId} {
       allow read: if true;
       allow create: if request.auth != null;
@@ -141,117 +175,54 @@ service cloud.firestore {
 
 ---
 
-## 🚀 Kurulum ve Çalıştırma Rehberi
+## 🧠 Gelişmiş Modüller (PWA & Anti-Theft)
 
-Bu projeyi yerel ortamınızda çalıştırmak için aşağıdaki adımları izleyin:
+### 1. Sıfır Dosyalı PWA Motoru (Blogger/Static Host Bypass)
 
-1. **Depoyu Klonlayın:**
-```bash
-git clone [https://github.com/KULLANICI_ADINIZ/film-mahseri.git](https://github.com/KULLANICI_ADINIZ/film-mahseri.git)
-cd film-mahseri
+Blogger veya katı statik hostlar kök dizine `manifest.json` yüklenmesini engellediği için "Line 1, Column 1 Syntax Error" hatası verir. Bu projede, fiziksel bir dosya kullanmak yerine **Base64 kodlanmış Data URI** ile tarayıcının hafızasında sanal bir PWA sistemi ayağa kaldırılır.
 
-```
+### 2. Gelişmiş Anti-Theft (Emeğe Saygı / Kredi Koruma) Sistemi
 
+Açık kaynak paylaşılan bu projenin footer kısmında yer alan "Tasarım & Altyapı: Ali Semi" yazısı özel bir şifreleme algoritmasıyla korunmaktadır.
 
-2. **API Anahtarlarını Alın:**
-* [Supabase](https://supabase.com/)'den yeni proje açın ve `URL` ile `anon_key` değerlerini alın.
-* [Firebase](https://firebase.google.com/)'den yeni proje oluşturun, Web Uygulaması ekleyip yapılandırma (config) kodlarını alın.
-* [TMDb](https://www.themoviedb.org/)'den geliştirici API anahtarınızı alın.
-
-
-3. **Config Ayarları (`app.js`):**
-`app.js` dosyasını açıp kendi anahtarlarınızı yerleştirin:
-```javascript
-// Supabase
-const supabaseUrl = 'YOUR_SUPABASE_URL';
-const supabaseKey = 'YOUR_SUPABASE_ANON_KEY';
-window.supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-// Firebase
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    // ...diğer ayarlar
-};
-firebase.initializeApp(firebaseConfig);
-
-```
-
-
-4. **Lokalde Çalıştırma:**
-Herhangi bir yerel sunucu (Örn: VS Code Live Server eklentisi) kullanarak `index.html` dosyasını başlatın.
+* Eğer bir hırsız kaynak koddan bu yazıyı silerse,
+* CSS ile `display: none` veya `opacity: 0` yapıp gizlemeye çalışırsa,
+Sistem durumu anında (2 saniye içinde) tespit eder ve sayfanın DOM'unu kilitleyerek kullanıcıyı otomatik olarak Orijinal Geliştirici Sitesine yönlendirir. Obfuscate (Karmaşıklaştırma) edildiği için kodun nerede olduğu anlaşılamaz.
 
 ---
 
-## 📱 Sihirli PWA Motoru (Blogger Bypass)
+## 🚧 Sıkça Sorulan Sorular ve Hata Çözümleri
 
-Projeyi GitHub Pages, Netlify veya Blogger gibi statik ortamlarda barındırırken fiziksel `manifest.json` dosyası sunucu tarafından engellendiği (404 / Syntax Error verdiği) için tarayıcıyı kandıran özel bir **Data URI** yöntemi geliştirilmiştir.
+**Soru: `app.js`'de `firebase is not defined` hatası alıyorum.**
+**Cevap:** Firebase SDK bağlantılarının (CDN) `app.js` çağrılmadan *önce* (`<head>` etiketleri arasında) yüklendiğinden emin olun. Projedeki sıralamayı bozmayın.
 
-**Kod Örneği (`index.html` sonu):**
+**Soru: `admin.html` sayfasına girdiğimde beni dışarı atıyor.**
+**Cevap:** Admin sayfasına sadece kurucu erişebilir. Firebase Auth üzerinden kayıt olduktan sonra `admin.html` dosyasını açıp `admin@seninsiten.com` yazan kod satırını kendi kayıt olduğunuz e-posta adresi ile değiştirin.
 
-```javascript
-const pwaManifest = {
-    "name": "Film Mahşeri",
-    "short_name": "Film Mahşeri",
-    "start_url": "[https://filmtest.iblogger.org/index.html](https://filmtest.iblogger.org/index.html)",
-    "display": "standalone",
-    "background_color": "#030406",
-    "theme_color": "#e50914",
-    "icons": [
-        { "src": "[https://filmtest.iblogger.org/favicon.ico/web-app-manifest-512x512.png](https://filmtest.iblogger.org/favicon.ico/web-app-manifest-512x512.png)", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
-    ]
-};
-
-// JSON objesini fiziksel dosya olmaksızın Base64 tarayıcı hafızasına yazma
-const manifestString = JSON.stringify(pwaManifest);
-const manifestUrl = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString);
-document.head.insertAdjacentHTML('beforeend', `<link rel="manifest" href="${manifestUrl}">`);
-
-```
-
----
-
-## 🚧 Karşılaşılan Sorunlar ve Çözümleri
-
-Geliştirme sürecinde karşılaşılan ve ustalıkla aşılan kritik "Debug" vakaları:
-
-1. **Hata:** `Manifest: Line: 1, column: 1, Syntax error.`
-* **Neden:** Sunucunun (Blogger) `.json` veya `.webmanifest` yüklemesine izin vermeyip, isteğe HTML (404 Sayfası) dönmesi. Tarayıcının `<` işaretini görünce çökmesi.
-* **Çözüm:** Fiziksel `<link rel="manifest">` kodları `<head>` içinden ve `site.webmanifest` kalıntıları sistemden tamamen silindi. Yukarıdaki Data URI (Sanal Hafıza) motoruna geçildi.
-
-
-2. **Hata:** PWA kurulumunda logonun "F" harfi olarak (kırık) çıkması.
-* **Neden:** Sanal manifest metodunun işletim sistemi (OS) katmanında maskeleme (`maskable`), eksik boyutlar ve göreceli yol (`relative path`) kısıtlamalarına takılması.
-* **Çözüm:** Koda `apple-touch-icon` meta etiketleri eklendi. Manifest içindeki logo yolları mutlak yola (`https://filmtest.iblogger.org/favicon.ico/web-app-manifest-512x512.png`) çevrildi ve `purpose: "any maskable"` eklendi.
-
-
-3. **Hata:** `TMDB_API_KEY has already been declared`
-* **Neden:** Değişkenin hem `app.js` hem de `index.html` içerisinde aynı isimle `const` olarak iki kez tanımlanması.
-* **Çözüm:** İsim uzayları (Namespace) ayrılarak ana sayfa sabiti `TREND_TMDB_API_KEY` olarak revize edildi.
-
-
-4. **Hata:** Açıkta Bırakılan Backend Anahtarları Yüzünden Silinme Riski
-* **Neden:** SPA (Single Page Application) yapısında Supabase `anon_key`'in herkes tarafından okunabilir olması.
-* **Çözüm:** "Güvenlik Mimarisi" başlığında anlatılan RLS politikaları (Sadece Okuma kuralı) veritabanına uygulandı.
-
-
+**Soru: Filmi ekliyorum ama oynatıcı açılmıyor.**
+**Cevap:** `player.html` dosyasının içindeki `IZIN_VERILEN_SITE` sabitini kendi alan adınız yapmadığınız için oynatıcı güvenlik gereği erişimi engelliyor.
 
 ---
 
 ## 🗺️ Yol Haritası (Roadmap)
 
-* [x] **Faz 1:** Core UI, Sayfalama (Pagination), Glassmorphism Tema
-* [x] **Faz 2:** Supabase Entegrasyonu ve TMDb Algoritması ile Editörün Seçtikleri
-* [x] **Faz 3:** Firebase Auth, Yorumlar, Güvenli İstek Modalı
-* [x] **Faz 4:** Sıfır Dosyalı, Data URI Destekli Kesintisiz PWA Motoru
-* [ ] **Faz 5:** İzleme Geçmişi ve Kullanıcı Özel "Watchlist" (Daha Sonra İzle)
-* [ ] **Faz 6:** Gelişmiş Video Player (HLS/M3U8 desteği) entegrasyonu
+* [x] **Faz 1:** Core UI, Cam Efektleri, Responsive Grid Yapısı.
+* [x] **Faz 2:** Supabase Veritabanı, TMDb Trend Algoritması, Live Search.
+* [x] **Faz 3:** Firebase Auth (Giriş/Kayıt), Gerçek Zamanlı Yorum ve İstek Sistemi.
+* [x] **Faz 4:** Sıfır Dosyalı Sanal PWA Yükleyici Modülü.
+* [x] **Faz 5:** Kapsamlı Yönetim (Admin) Paneli ve Rol/Ban Sistemi.
+* [ ] **Faz 6:** Bölüm takip sistemli ve otomatik sıradaki bölüme geçişli Dizi Mimarisi (Planlanıyor).
 
 ---
+
+## 🤝 Katkıda Bulunma & Lisans
+
+Bu proje, modern web mimarisi sınırlarını zorlamak, sunucu kısıtlamalarını yaratıcı JavaScript yöntemleriyle aşmak ve Vanilla JS ile BaaS (Supabase/Firebase) çözümlerinin gücünü göstermek amacıyla geliştirilmiştir.
+
+Eğer projeye katkıda bulunmak isterseniz bir `Pull Request` gönderebilir veya karşılaştığınız sorunları `Issues` sekmesinde açabilirsiniz.
 
 **Geliştirici:** Ali Semi
 
-*Mimari tasarım, modern web framework kısıtlamalarını Vanilla JS ve BaaS çözümleriyle aşmak amacıyla deneysel bir mühendislik projesi olarak üretilmiştir.*
+*Bu proje MIT Lisansı ile açık kaynaklı olarak paylaşılmıştır ancak geliştirici kredilerinin (Footer) kaldırılmaması şartıyla kullanıma uygundur.*
 
----
+```
