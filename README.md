@@ -224,5 +224,3 @@ Eğer projeye katkıda bulunmak isterseniz bir `Pull Request` gönderebilir veya
 **Geliştirici:** Ali Semi
 
 *Bu proje MIT Lisansı ile açık kaynaklı olarak paylaşılmıştır ancak geliştirici kredilerinin (Footer) kaldırılmaması şartıyla kullanıma uygundur.*
-
-```
